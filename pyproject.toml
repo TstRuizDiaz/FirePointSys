@@ -3,7 +3,6 @@ name = "firepointsys"
 version = "0.1.0"
 description = "Sistema FirePoint para gerenciamento de pontos"
 authors = ["Seu Nome <seu.email@example.com>"]
-readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
