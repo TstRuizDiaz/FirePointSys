@@ -1,1 +1,9 @@
-pythonVersion: "3.12"
+services:
+  - type: web
+    name: FirePointSys
+    env: python
+    plan: free
+    branch: main
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn app:app
+    pythonVersion: 3.12
