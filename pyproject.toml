@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "firepointsys"
+version = "0.1.0"
+description = "Sistema FirePoint"
+authors = ["Seu Nome <seu.email@example.com>"]
+
+[tool.poetry.dependencies]
+python = "^3.11"
+Flask = "2.3.3"
+gunicorn = "21.2.0"
+Pillow = "10.2.0"
+
+[tool.poetry.group.dev.dependencies]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
