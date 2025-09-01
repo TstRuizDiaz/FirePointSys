@@ -6,20 +6,6 @@ import smtplib
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from werkzeug.utils import secure_filename
-from PIL import Image
-
-app = Flask(__name__)
-app.secret_key = "chave_super_secreta"
-
-from flask import Flask, render_template, request, redirect, url_for, session, flash
-import sqlite3
-import os
-from datetime import datetime, timedelta
-import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from werkzeug.utils import secure_filename
-from PIL import Image
 
 app = Flask(__name__)
 app.secret_key = "chave_super_secreta"
@@ -36,23 +22,12 @@ EMAIL_CONFIG = {
     'password': 'sua_senha_app'
 }
 
-# Configurações de upload
-app.config['UPLOAD_FOLDER'] = 'static/uploads/extintores'
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
-
-# Criar pasta de uploads se não existir
-os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
-
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
 # Função para atualizar o schema do banco de dados
 def atualizar_schema():
     conn = sqlite3.connect("banco.db")
     cursor = conn.cursor()
     
-    # Verificar se as colunas novas já existem
+    # Verificar se as colunas novas já existisession
     cursor.execute("PRAGMA table_info(usuarios)")
     colunas = [coluna[1] for coluna in cursor.fetchall()]
     
@@ -66,7 +41,7 @@ def atualizar_schema():
     if 'data_validacao_token' not in colunas:
         cursor.execute("ALTER TABLE usuarios ADD COLUMN data_validacao_token TEXT")
     
-    # Verificar e criar tabela de extintores se não existir
+    # Verificar e criar tabela de extintores se não existsession
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='extintores'")
     if not cursor.fetchone():
         cursor.execute("""
@@ -91,12 +66,12 @@ def atualizar_schema():
     conn.close()
     print("Schema do banco de dados atualizado com sucesso!")
 
-# Criar banco e tabela de usuários, se não existir
+# Criar banco e tabela de usuários, se não existsession
 def init_db():
     conn = sqlite3.connect("banco.db")
     cursor = conn.cursor()
     
-    # Verificar se a tabela já existe
+    # Verificar se a tabela já existsession
     cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='usuarios'")
     tabela_existe = cursor.fetchone()
     
@@ -124,7 +99,7 @@ def init_db():
         conn.commit()
         print("Banco de dados criado e usuários inseridos com sucesso!")
     else:
-        # Se a tabela já existe, atualizar o schema
+        # Se a tabela já existsession, atualizar o schema
         atualizar_schema()
     
     conn.close()
@@ -212,7 +187,7 @@ def login():
         conn = sqlite3.connect("banco.db")
         cursor = conn.cursor()
         
-        # Verificar se a coluna token_validado existe
+        # Verificar se a coluna token_validado existsession
         cursor.execute("PRAGMA table_info(usuarios)")
         colunas = [coluna[1] for coluna in cursor.fetchall()]
         
@@ -271,7 +246,7 @@ def verificar_token():
             conn = sqlite3.connect("banco.db")
             cursor = conn.cursor()
             
-            # Verificar se a coluna existe antes de tentar atualizar
+            # Verificar se a coluna existsession antes de tentar atualizar
             cursor.execute("PRAGMA table_info(usuarios)")
             colunas = [coluna[1] for coluna in cursor.fetchall()]
             
@@ -279,7 +254,7 @@ def verificar_token():
                 cursor.execute("UPDATE usuarios SET token_validado = 1, data_validacao_token = ? WHERE id = ?", 
                               (datetime.now().isoformat(), session["usuario_id"]))
             else:
-                # Se as colunas não existem, criar elas primeiro
+                # Se as colunas não existsession, criar elas primeiro
                 atualizar_schema()
                 cursor.execute("UPDATE usuarios SET token_validado = 1, data_validacao_token = ? WHERE id = ?", 
                               (datetime.now().isoformat(), session["usuario_id"]))
@@ -309,7 +284,7 @@ def dashboard():
                          nome=session["nome"],
                          token_expira=TOKEN_EXPIRACAO.isoformat())
 
-# Cadastrar extintor com foto - CORRIGIDO
+# Cadastrar extintor SEM foto (removido upload)
 @app.route("/extintores/cadastrar", methods=["GET", "POST"])
 def cadastrar_extintor():
     if not session.get("token_validado"):
@@ -326,22 +301,8 @@ def cadastrar_extintor():
         data_proxima_inspecao = request.form["data_proxima_inspecao"]
         observacoes = request.form["observacoes"]
         
-        # Processar upload da foto
+        # REMOVIDO: Processamento de upload da foto
         foto_path = None
-        if 'foto' in request.files:
-            file = request.files['foto']
-            if file and file.filename != '' and allowed_file(file.filename):
-                # Gerar nome único para o arquivo
-                timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-                filename = secure_filename(f"extintor_{numero_serie}_{timestamp}_{file.filename}")
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-                file.save(filepath)
-                
-                # ✅ CORREÇÃO: Salvar apenas o nome do arquivo
-                foto_path = filename
-                
-                print(f"✅ Foto salva em: {filepath}")
-                print(f"✅ Nome do arquivo no BD: {foto_path}")
 
         try:
             conn = sqlite3.connect("banco.db")
@@ -366,7 +327,7 @@ def cadastrar_extintor():
     
     return render_template("cadastrar_extintor.html")
 
-# Listar extintores - ATUALIZADA
+# Listar extintores
 @app.route("/extintores")
 def listar_extintores():
     if not session.get("token_validado"):
@@ -379,38 +340,7 @@ def listar_extintores():
     extintores = cursor.fetchall()
     conn.close()
     
-    # Processar os caminhos das fotos para incluir o caminho completo
-    extintores_processados = []
-    for extintor in extintores:
-        extintor_list = list(extintor)
-        if extintor_list[10]:  # Se tem foto_path
-            # Adicionar o caminho completo correto
-            extintor_list[10] = f"uploads/extintores/{extintor_list[10]}"
-        extintores_processados.append(extintor_list)
-    
-    return render_template("listar_extintores.html", extintores=extintores_processados)
-
-# Rota para corrigir caminhos existentes
-@app.route("/corrigir-caminhos")
-def corrigir_caminhos():
-    conn = sqlite3.connect("banco.db")
-    cursor = conn.cursor()
-    
-    # Listar todos os extintores com foto
-    cursor.execute("SELECT id, foto_path FROM extintores WHERE foto_path IS NOT NULL")
-    extintores = cursor.fetchall()
-    
-    for id_ext, foto_path in extintores:
-        # Extrair apenas o nome do arquivo do caminho completo
-        if foto_path and '/' in foto_path:
-            nome_arquivo = foto_path.split('/')[-1]  # Pega apenas o nome do arquivo
-            cursor.execute("UPDATE extintores SET foto_path = ? WHERE id = ?", 
-                          (nome_arquivo, id_ext))
-            print(f"✅ Corrigido: ID {id_ext} - {foto_path} -> {nome_arquivo}")
-    
-    conn.commit()
-    conn.close()
-    return "Caminhos corrigidos!"
+    return render_template("listar_extintores.html", extintores=extintores)
 
 # Logout
 @app.route("/logout")
@@ -418,15 +348,6 @@ def logout():
     session.clear()
     flash("Você foi desconectado com sucesso.")
     return redirect(url_for("login"))
-
-#if __name__ == "__main__":
-   # init_db()
-  #  app.run(host="127.0.0.1", port=5000, debug=True)#
-
-# ⚠️ IMPORTANTE: Remova ou comente estas linhas finais:
-# if __name__ == "__main__":
-#     init_db()
-#     app.run(host="127.0.0.1", port=5000, debug=True)
 
 # ✅ Adicione estas linhas no FINAL para o Vercel:
 def handler(request, response):
