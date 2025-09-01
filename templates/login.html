@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Login - FirePoint</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='form.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="login-container">
+        <img src="{{ url_for('static', filename='img/Controle de Extintores.png') }}" alt="Logo" class="logo">
+        <h2>Login</h2>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert">
+                {{ messages[0] }}
+            </div>
+        {% endif %}
+        {% endwith %}
+
+        <!-- Formulário falso para enganar o navegador -->
+        <form class="hidden" action="#" method="post">
+            <input type="text" name="fakeusername">
+            <input type="password" name="fakepassword">
+        </form>
+
+        <!-- Formulário real -->
+        <form method="POST" action="{{ url_for('login') }}" id="loginForm" autocomplete="off">
+            <div class="input-group">
+                <input type="text" name="usuario" id="usuario" placeholder="Usuário" required autocomplete="new-password">
+            </div>
+            
+            <div class="input-group">
+                <input type="password" name="senha" id="senha" placeholder="Senha" required autocomplete="new-password">
+                <button type="button" class="toggle-password" id="togglePassword">Mostrar</button>
+            </div>
+            
+            <button type="submit">Entrar</button>
+        </form>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Limpar qualquer preenchimento automático que possa ter ocorrido
+            document.getElementById('usuario').value = '';
+            document.getElementById('senha').value = '';
+            
+            // Prevenir o comportamento padrão de autocomplete
+            document.getElementById('loginForm').addEventListener('submit', function() {
+                setTimeout(function() {
+                    document.getElementById('usuario').setAttribute('autocomplete', 'off');
+                    document.getElementById('senha').setAttribute('autocomplete', 'off');
+                }, 10);
+            });
+            
+            // Funcionalidade para mostrar/ocultar senha
+            const togglePassword = document.getElementById('togglePassword');
+            const passwordInput = document.getElementById('senha');
+            
+            togglePassword.addEventListener('click', function() {
+                // Alternar entre tipo password e text
+                const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+                passwordInput.setAttribute('type', type);
+                
+                // Alterar o texto do botão
+                this.textContent = type === 'password' ? 'Mostrar' : 'Ocultar';
+            });
+            
+            // BLOQUEAR ESPAÇOS NO CAMPO DE USUÁRIO
+            const usuarioInput = document.getElementById('usuario');
+            usuarioInput.addEventListener('keydown', function(e) {
+                if (e.key === ' ') {
+                    e.preventDefault();
+                }
+            });
+            
+            // BLOQUEAR ESPAÇOS NO CAMPO DE SENHA
+            const senhaInput = document.getElementById('senha');
+            senhaInput.addEventListener('keydown', function(e) {
+                if (e.key === ' ') {
+                    e.preventDefault();
+                }
+            });
+            
+            // REMOVER ESPAÇOS SE COLAREM CONTEÚDO
+            usuarioInput.addEventListener('input', function() {
+                this.value = this.value.replace(/\s/g, '');
+            });
+            
+            senhaInput.addEventListener('input', function() {
+                this.value = this.value.replace(/\s/g, '');
+            });
+        });
+    </script>
+</body>
+</html>

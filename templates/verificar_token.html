@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <title>Verificar Token - FirePoint</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='token.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="token-container">
+        <img src="{{ url_for('static', filename='img/Controle de Extintores.png') }}" alt="Logo" class="logo">
+        <h2>Verificação de Token</h2>
+        <div class="user-info">Usuário: {{ session.nome }}</div>
+
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="alert">
+                {{ messages[0] }}
+            </div>
+        {% endif %}
+        {% endwith %}
+
+        <form method="POST" action="{{ url_for('verificar_token') }}" autocomplete="off">
+            <div class="input-group">
+                <input type="password" name="token" id="token" placeholder="Digite o token" required autocomplete="off">
+            </div>
+            
+            <button type="submit">Validar Token</button>
+        </form>
+        
+        <div class="info">
+            <p>Token válido até: {{ TOKEN_EXPIRACAO.strftime('%d/%m/%Y') }}</p>
+            <p>Entre em contato com o administrador para obter o token.</p>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Focar no campo de token
+            const tokenInput = document.getElementById('token');
+            tokenInput.focus();
+            
+            // BLOQUEAR ESPAÇOS NO CAMPO DE TOKEN
+            tokenInput.addEventListener('keydown', function(e) {
+                if (e.key === ' ') {
+                    e.preventDefault();
+                }
+            });
+            
+            // REMOVER ESPAÇOS SE COLAREM CONTEÚDO
+            tokenInput.addEventListener('input', function() {
+                this.value = this.value.replace(/\s/g, '');
+            });
+        });
+    </script>
+</body>
+</html>

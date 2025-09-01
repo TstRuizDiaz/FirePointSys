@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=, initial-scale=1.0">
+  <title>Document</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Tela inicial -->
+<div id="splash">
+    <img src="img/Controle de Extintores.png" alt="">
+    <h1>VXextingSys</h1>
+    <p>Extintor pronto hoje, segurança garantida amanhã</p>
+    <div class="progress-container">
+        <div class="progress-bar" id="progressBar"></div>
+    </div>
+</div>
+
+
+<script>
+    let progress = 0;
+    const progressBar = document.getElementById("progressBar");
+
+    // Simula carregamento
+    const interval = setInterval(() => {
+        progress += Math.floor(Math.random() * 10) + 5; // Avança entre 5 e 15%
+        if (progress > 100) progress = 100;
+        progressBar.style.width = progress + "%";
+
+        if (progress === 100) {
+            clearInterval(interval);
+            setTimeout(() => {
+                document.getElementById("splash").style.display = "none";
+                document.getElementById("form.html").style.display = "block";
+                document.body.style.overflow = "auto";
+            }, 500); // Espera meio segundo antes de mostrar dashboard
+        }
+    }, 200);
+</script>
+</body>
+</html>

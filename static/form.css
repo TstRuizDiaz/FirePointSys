@@ -1,0 +1,114 @@
+  body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f7f7f7;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        .login-container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            position: relative;
+            height: 450px;
+        }
+        
+        .logo {
+          position: absolute;
+            width: 300px;
+            margin-top: -50px;
+            margin-left: -147px;
+        }
+        
+        h2 {
+            color: #333;
+            margin-top: 110px;
+            font-weight: bold;
+            font-size: 50px;
+            margin-right: 250px;
+            margin-bottom: 10px;
+        }
+        
+        .alert {
+            background-color: #ffebee;
+            color: #770202;
+            padding: 10px;
+            border-radius: 5px;
+            border: 2px solid #480101;
+            border: 2px solid ;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+        
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        input {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+            background-color: #f8f9fa !important;
+            box-sizing: border-box;
+        }
+        
+        input:focus {
+            border-color: #770202;
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(89, 1, 1, 0.2);
+        }
+        
+        .toggle-password {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #777;
+            font-size: 14px;
+        }
+        
+        .toggle-password:hover {
+            color: #87201a;
+        }
+        
+        button[type="submit"] {
+            background-color: #87201a;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            font-weight: bold;
+            margin-top: 10px;
+        }
+        
+        button[type="submit"]:hover {
+            background-color: #480101;
+        }
+        
+        .hidden {
+            display: none;
+        }
