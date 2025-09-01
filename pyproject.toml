@@ -1,5 +1,15 @@
+[tool.poetry]
+name = "firepointsys"
+version = "0.1.0"
+description = "Sistema FirePoint para gerenciamento de pontos"
+authors = ["Seu Nome <seu.email@example.com>"]
+
 [tool.poetry.dependencies]
 python = "^3.11"
 Flask = "^2.3.3"
 gunicorn = "^21.2.0"
-Pillow = "9.5.0"  # ← Versão ESTÁVEL e testada
+Pillow = "9.5.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
